@@ -22,6 +22,10 @@ app.get('/',(req, res) => {
     res.json({"message": "welcome to the nextluk backend!"});
 });
 
+// to use the index of the routers folder
+const routes = require('./routers/index');
+app.use("/api", routes)
+
 var server = app.listen(5000,function(){
     var port = server.address().port
     console.log("Your app is listening on localhost: " + port)
