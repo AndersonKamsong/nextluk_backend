@@ -93,3 +93,22 @@ exports.login = async (req, res) => {
     }
 
 }
+
+exports.delete = async (req, res) => {
+    try {
+        console.log(req.body);
+        const [user] = await Promise.all([
+            UserModel.getByID(req.params.id),
+        ]);
+        if (!user)
+            return res.status(401).json({ error: 'Account do not exist.' });
+
+        // console.log(user);
+        user.delete()
+        res.status(201).send({ message: `User deleted successfully!` });
+    }
+    catch (e) {
+        console.log(e)
+        return res.status(501).json({ error: 'server error' })
+    }
+};
