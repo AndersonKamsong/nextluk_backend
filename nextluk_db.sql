@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `salon` (
 DELETE FROM `salon`;
 
 -- Listage de la structure de table nextluk_db. user
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `users` (
   `userId` int NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,

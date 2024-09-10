@@ -1,55 +1,69 @@
 const connection = require('../config/dbConfig')
+const uuid = require('uuid');
 
 const UserModel = function (model) {
     this.userId = model.userId
-    this.name = model.name
+    this.username = model.username
     this.email = model.email
-    this.token = model.token
     this.password = model.password
-    this.passwordString = model.passwordString
+    this.userType = model.userType
+    this.token = model.token
 
     // this.password_confirmation = model.password_confirmation  // password confirmation is niot store
 }
 
-UserModel.save = () => {
+UserModel.prototype.save = async function () {
     if (this.userId) {
-        connection.query("UPDATE users SET ? WHERE userId = ?", [this, this.userId], (err, res) => {
+        await connection.query("UPDATE users SET ? WHERE userId = ?", [this, this.userId], (err, res) => {
             if (err) {
                 throw ("Can not save user error", err)
             }
         });
     } else {
-        connection.query("INSERT INTO users SET ?", this, (err, res) => {
+        this.token = null
+        console.log(this);
+        await connection.query("INSERT INTO users SET ?", this, (err, res) => {
             if (err) {
                 throw ("Can not save user error", err)
             }
-            this.userId
+            this.userId = res.insertId;
+            console.log(this.userId);
         });
     }
 
 };
-
-UserModel.getAll = () => {
-    connection.query("SELECT * FROM users", (err, resp) => {
-        if (err) {
-            throw ("can not get data", err)
-        }
-        const userList = resp.map(row => new UserModel(row).toJson());
-        console.log("Users objects:", userList);
-        return userList
-    })
-}
-UserModel.getByID = (id) => {
-    connection.query(`SELECT * FROM users where userId = '${id}'`, (err, resp) => {
-        if (err) {
-            throw ("can not get data", err)
-        }
-        if (resp.length) {
-            // console.log("Users objects:", resp[0]);
-            return new UserModel(resp[0])
-        }
-        return null
-    })
+UserModel.getAll = async () => {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM users`, async (err, resp) => {
+            if (err) {
+                reject("can not get data", err);
+            }
+            if (resp.length) {
+                console.log("Users objects:", resp[0]);
+                console.log(new UserModel(resp[0]));
+                const userList = resp.map(row => new UserModel(row).toJson());
+                resolve(userList);
+            } else {
+                resolve([]);
+            }
+        });
+    });
+};
+UserModel.getByID = async (id) => {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM users where userId = '${id}'`, async (err, resp) => {
+            if (err) {
+                reject("can not get data", err);
+            }
+            if (resp.length) {
+                console.log("Users objects:", resp[0]);
+                console.log("Users objects:", new UserModel(resp[0]));
+                resolve(new UserModel(resp[0]));
+            } else {
+                resolve(null);
+            }
+        });
+    });
 }
 UserModel.delete = () => {
     connection.query("DELETE FROM Admin WHERE userId = ?", this.id, (err, res) => {
@@ -58,26 +72,44 @@ UserModel.delete = () => {
         }
     });
 };
-UserModel.getByEmail = (email) => {
-    connection.query(`SELECT * FROM users where email = '${email}'`, (err, resp) => {
-        if (err) {
-            throw ("can not get data", err)
-        }
-        if (resp.length) {
-            // console.log("Users objects:", resp[0]);
-            return new UserModel(resp[0])
-        }
-        return null
-    })
+UserModel.getByEmail = async (email) => {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM users where email = '${email}'`, async (err, resp) => {
+            if (err) {
+                reject("can not get data", err);
+            }
+            if (resp.length) {
+                console.log("Users objects:", resp[0]);
+                console.log("Users objects:", new UserModel(resp[0]));
+                resolve(new UserModel(resp[0]));
+            } else {
+                resolve(null);
+            }
+        });
+    });
 }
-// method to send data to the front end
-UserModel.toJson = () => {
+UserModel.getByUname = async (name) => {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM users where username = '${name}'`, async (err, resp) => {
+            if (err) {
+                reject("can not get data", err);
+            }
+            if (resp.length) {
+                console.log("Users objects:", resp[0]);
+                console.log("Users objects:", new UserModel(resp[0]));
+                resolve(new UserModel(resp[0]));
+            } else {
+                resolve(null);
+            }
+        });
+    });
+}
+UserModel.prototype.toJson = function () {
     return {
-        "userId": this.userId,
-        "password": this.password,
-        "name": this.name,
-        "email": this.email,
-    }
-}
+        userId: this.userId,
+        username: this.username,
+        email: this.email,
+    };
+};
 
 module.exports = UserModel;
