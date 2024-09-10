@@ -1,4 +1,4 @@
-const connection = require('./config/dbConfig')
+const connection = require('../config/dbConfig')
 
 const SalonModel = function (model, options) {
     this.SalonId = model.SalonId

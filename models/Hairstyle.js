@@ -1,4 +1,4 @@
-const connection = require('config, dbConfig')
+const connection = require('../config/dbConfig')
 
 const HairstyleModel = function (model) {
     this.hairstyle_id = model.hairstyle_id

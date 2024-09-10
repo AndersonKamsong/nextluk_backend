@@ -1,4 +1,4 @@
-const connection = require('config, dbConfig')
+const connection = require('../config/dbConfig')
 
 const PaymentModel = function (model) {
     this.payment_id = model.payment_id

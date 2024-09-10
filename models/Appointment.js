@@ -1,4 +1,4 @@
-const connection = require('./config/dbConfig')
+const connection = require('../config/dbConfig')
 
 const AppointmentModel = function (model) {
     this.appointment_id = model.appointment_id
